@@ -213,6 +213,7 @@ void CiQIYI_Web_UploadDlg::OnBnClickedBtnServer()
 
 	stream << "Host: upload.iqiyi.com\r\n";
 	stream << g_cookie << "\r\n";
+	stream << "Referer: http://www.iqiyi.com/upload?type=0&ufrm=web_iqiyi_uc\r\n";
 	stream << "Connection: Keep-Alive\r\n\r\n";
 
 	std::string request = stream.str();
@@ -400,6 +401,7 @@ void CiQIYI_Web_UploadDlg::OnBnClickedBtnUpload()
 		streamPost << "Host: "<< host << "\r\n";
 		streamPost << "DNT: 1\r\n";
 		streamPost << "Connection: keep-alive\r\n";
+		streamPost << "Referer: http://www.iqiyi.com/upload?type=0&ufrm=web_iqiyi_uc\r\n";
 		streamPost << "Cache-Control: no-cache\r\n";
 		streamPost << g_cookie << "\r\n";
 		streamPost << "Content-Length: " << nContentLen << "\r\n\r\n";
@@ -509,6 +511,7 @@ void CiQIYI_Web_UploadDlg::OnBnClickedBtnSave()
 	stream << "Accept-Encoding: gzip, deflate\r\n";
 	stream << g_cookie << "\r\n";
 	stream << "Connection: Keep-Alive\r\n";
+	stream << "Referer: http://www.iqiyi.com/upload?type=0&ufrm=web_iqiyi_uc\r\n";
 	stream << "Content-Length: " << content.size() << "\r\n\r\n";
 
 	
@@ -524,6 +527,27 @@ void CiQIYI_Web_UploadDlg::OnBnClickedBtnSave()
 		Transcode::UTF8_to_Unicode(strGetResult.c_str(), strGetResult.size(), wStr);
 		const wchar_t* pData = wStr.c_str();
 		OutputDebugString(pData);
+
+		Json::Reader reader;
+		Json::Value root;
+		if (reader.parse(strGetResult,root))
+		{
+			bool bSuccess = false;
+			if (!root["code"].isNull())
+			{
+				std::string  code = root["code"].asCString();
+				if (code.find("A00000")!= std::string::npos)
+					bSuccess = true;
+			}
+			if (bSuccess)
+			{
+				AfxMessageBox(_T("更新成功！"));
+			}
+			else
+			{
+				::MessageBox(m_hWnd,pData,_T("更新失败"),MB_OK|MB_ICONERROR);
+			}
+		}
 	}
 	else
 	{	

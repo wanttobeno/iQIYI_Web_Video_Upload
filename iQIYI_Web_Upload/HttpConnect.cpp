@@ -226,6 +226,7 @@ bool HttpConnect::getData1_1(std::string host, std::string path, std::string get
 	stream << "Accept: */*\r\n";
 	stream << "Host: " << host << "\r\n";
 	stream << "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.2.3) Gecko/20100401 Firefox/3.6.3\r\n";
+	stream << "Referer: http://www.iqiyi.com/upload?type=0&ufrm=web_iqiyi_uc\r\n";
 	stream << "Connection: Keep-Alive\r\n\r\n";
 	return socketHttp(host, stream.str());
 }
